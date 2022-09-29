@@ -24,5 +24,5 @@ app.use("/api",router)
 
 const PORT = process.env.APP_PORT || 8000;
 app.listen(PORT, () => {
-  console.log("sever is running port ", PORT);
+  console.log("server is running port ", PORT);
 });
