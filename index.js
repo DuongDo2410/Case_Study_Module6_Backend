@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+const router = require("./src/routers/router");
 
 const app = express();
 dotenv.config();
@@ -17,10 +18,9 @@ mongoose.connect(DB_URL).then(() => {
 mongoose.connection.on("error", (err) => {
   console.log(`DB Connected error: ${err.message}`);
 });
-
-app.get("/", (req, res) => {
-  res.json({ product: { name: "name" } });
-});
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+app.use("/api",router)
 
 const PORT = process.env.APP_PORT || 8000;
 app.listen(PORT, () => {
