@@ -5,6 +5,10 @@ const userSchema = mongoose.Schema({
         required: true,
 
     },
+    email:{
+        type: String,
+        // required: true,
+    },
 
     password: {
         type: String,
@@ -13,8 +17,20 @@ const userSchema = mongoose.Schema({
     },
     phoneNumber: {
         type: Number,
-        required: true
+        // required: true
 
+    },
+    address:{
+        type: String,
+        // required: true,
+    },
+    avatar:{
+        type: String,
+
+    },
+    fullName:{
+        type: String,
+        // required: true
     }
 
 })
