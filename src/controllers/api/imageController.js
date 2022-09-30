@@ -1,12 +1,11 @@
 const Image = require("../../models/image")
 
 const ImageController = {
-    addImage: async (listImage) => {
+    addImage: async (data, res) => {
         try {
-            let image = await Image.create(listImage);
-            return image;
+            await Image.create(data.image);
         }catch (err) {
-            console.log(err);
+            res.status(404).send(err);
         }
 
     }
