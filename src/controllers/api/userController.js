@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
-const User = require("../models/userModel");
+const User = require("../../models/userModel");
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
-const {SECRET_KEY, generateToken} = require("../middlewares/auth");
+const {SECRET_KEY, generateToken} = require("../../middlewares/auth");
 
 
 register = async (req, res) => {
@@ -100,14 +100,6 @@ updateUserProfile = async (req, res) => {
 
           const updateUser = await user.save();
           res.json(
-              // _id: user.id,
-              // username: user.username,
-              // email: user.email,
-              // address: user.address,
-              // phoneNumber: user.phoneNumber,
-              // fullName: user.fullName,
-              // avatar: user.avatar,
-              // token: generateToken(updateUser._id)
               updateUser
           )
 
