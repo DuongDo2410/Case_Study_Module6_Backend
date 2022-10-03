@@ -14,6 +14,10 @@ const homeSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Image'
     },
+    idDay: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Day'
+    }],
     idCategory: {
         type: Schema.Types.ObjectId,
         ref: 'Category'

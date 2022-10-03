@@ -1,12 +1,12 @@
 const Home = require("../../../models/home");
 const ImageController = require("./imageController");
 const DayController = require("./dayController");
+const Day = require("../../../models/day");
 
 const HomeController = {
   addHome: async (req, res) => {
     try {
       const data = req.body;
-      console.log("data", data);
       let idImage = await ImageController.addImage(data);
       data.idImage = idImage;
       let home = await Home.create(data);
@@ -103,6 +103,26 @@ const HomeController = {
     try {
       let homes = await Home.find().populate('idImage', 'link');
       res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
+
+  UpdateStatus: async (req, res) => {
+    try {
+      let idHome = req.params.id
+      let data = req.body;
+      let days = await DayController.checkDay(data)
+      days.forEach( async (day) => {
+        await Home.updateOne(
+        {_id: idHome},
+        {$pull: {idDay: day._id}}
+        )
+      });
+      let newHome = await Home.findById(idHome)
+      res.status(200).json(newHome);
     } catch (err) {
       res.status(500).send({
         error: err.message,
