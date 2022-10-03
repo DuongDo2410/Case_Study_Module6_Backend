@@ -3,6 +3,6 @@ const DayController = require("../../controllers/api/home/dayController");
 
 const dayRouter = Router.Router();
 
-dayRouter.post("", DayController.createDay);
+dayRouter.post("/booking/:id", DayController.booking);
 
 module.exports = dayRouter;

@@ -11,6 +11,7 @@ const otpModel = require("../../models/otp");
 register = async (req, res) => {
   try {
     let user = req.body;
+    console.log(user)
     let username = await User.findOne({ username: user.username });
     if (!username) {
       user.password = await bcrypt.hash(user.password, 10);
@@ -52,7 +53,7 @@ login = async (req, res) => {
           expiresIn: 36000 * 36000 * 100,
         });
 
-        console.log(token);
+        // console.log(token);
         res.status(200).json({
           token: token,
         });

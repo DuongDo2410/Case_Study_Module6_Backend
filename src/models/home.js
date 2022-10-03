@@ -10,6 +10,14 @@ const homeSchema = new mongoose.Schema({
     amountBathroom: Number,
     description: String,
     price: Number,
+    idImage: {
+        type: Schema.Types.ObjectId,
+        ref: 'Image'
+    },
+    idDay: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Day'
+    }],
     idCategory: {
         type: Schema.Types.ObjectId,
         ref: 'Category'
@@ -17,14 +25,6 @@ const homeSchema = new mongoose.Schema({
     idUser: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    },
-    idCity: {
-        type: Schema.Types.ObjectId,
-        ref: 'City'
-    },
-    idDistrict: {
-        type: Schema.Types.ObjectId,
-        ref: 'District'
     },
 })
 
