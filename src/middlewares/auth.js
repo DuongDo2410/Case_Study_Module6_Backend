@@ -1,46 +1,44 @@
-const jwt = require ("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const { nextTick } = require("process");
 
-
-const generateToken = (id) =>{
-    return jwt.sign({id}, process.env.SECRET_KEY,{
-        expiresIn: '30d'
-    })
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.SECRET_KEY, {
+    expiresIn: "30d",
+  });
 };
 
-
-const SECRET_KEY  = '2000';
-const auth = (req, res) => {
-    let authorization = req.headers.authorization;
-    console.log(authorization);
-    if (authorization) {
-        let accessToken = authorization.split(' ')[1];
-        if (!accessToken) {
-            res.status(401).json({
-                message: 'you are anonymous'
-            });
-        } else {
-            jwt.verify(accessToken, SECRET_KEY, (err, data) => {
-                if (err) {
-                    res.status(401).json({
-                        error: err.message,
-                        message: 'you are anonymous'
-                    })
-                } else {
-                    req.decoded = data;
-
-                }
-            })
-        }
+const SECRET_KEY = "duckies";
+const auth = (req, res, next) => {
+  let authorization = req.headers.authorization;
+  console.log(authorization);
+  console.log(process.env.SECRET_KEY);
+  if (authorization) {
+    let accessToken = authorization.split(" ")[1];
+    if (!accessToken) {
+      res.status(401).json({
+        message: "you are anonymous",
+      });
     } else {
-        res.status(401).json({
-            message: 'you are anonymous'
-        })
+      jwt.verify(accessToken, process.env.SECRET_KEY, (err, data) => {
+        if (err) {
+          res.status(401).json({
+            error: err.message,
+            message: "you are anonymous",
+          });
+        } else {
+          req.decoded = data;
+          next();
+        }
+      });
     }
-}
+  } else {
+    res.status(401).json({
+      message: "you are anonymous",
+    });
+  }
+};
 
-
-
-module.exports ={
-    auth,
-    generateToken
-}
+module.exports = {
+  auth,
+  generateToken,
+};

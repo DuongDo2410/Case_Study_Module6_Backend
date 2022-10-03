@@ -17,7 +17,16 @@ const HomeController = {
       });
     }
   },
-
+  getAll: async (req, res) => {
+    try {
+      let homes = await Home.find({});
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  },
   deleteHome: async (req, res) => {
     try {
       let idHome = req.params.id;
