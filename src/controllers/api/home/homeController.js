@@ -7,7 +7,8 @@ const HomeController = {
     try {
       const data = req.body;
       console.log("data", data);
-      await ImageController.addImage(data);
+      let idImage = await ImageController.addImage(data);
+      data.idImage = idImage;
       let home = await Home.create(data);
       console.log(home);
       res.status(200).json({ home });
@@ -42,7 +43,7 @@ const HomeController = {
   showDetail: async (req, res) => {
     try {
       let idHome = req.params.id;
-      let checkHome = await Home.findById(idHome);
+      let checkHome = await Home.findById(idHome).populate('idImage', 'link');
       if (!checkHome) {
         res.status(404).send({ errorMessage: "Home not found!!" });
       } else {
@@ -92,6 +93,16 @@ const HomeController = {
         price: { $gt: data?.min, $lt: data?.max },
       });
       res.status(200).send(Homes);
+    } catch (err) {
+      res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
+  showAllHouse: async (req, res) => {
+    try {
+      let homes = await Home.find().populate('idImage', 'link');
+      res.status(200).json(homes);
     } catch (err) {
       res.status(500).send({
         error: err.message,

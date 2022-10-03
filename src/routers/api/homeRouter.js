@@ -8,5 +8,6 @@ homeRouter.put("/:id", HomeController.updateHome);
 homeRouter.delete("/:id", HomeController.deleteHome);
 homeRouter.get("/:id", HomeController.showDetail);
 homeRouter.get("/find/home", HomeController.fiterHome);
+homeRouter.get("", HomeController.showAllHouse);
 
 module.exports = homeRouter;
