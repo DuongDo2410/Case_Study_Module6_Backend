@@ -14,10 +14,6 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    resetLink: {
-        data: String,
-        default:''
-    },
     phoneNumber: {
         type: Number,
         // required: true
