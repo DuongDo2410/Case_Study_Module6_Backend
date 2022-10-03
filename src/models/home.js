@@ -10,10 +10,10 @@ const homeSchema = new mongoose.Schema({
     amountBathroom: Number,
     description: String,
     price: Number,
-    idImage: {
+    idImage: [{
         type: Schema.Types.ObjectId,
         ref: 'Image'
-    },
+    }],
     idDay: [{
         type: Schema.Types.ObjectId,
         ref: 'Day'
