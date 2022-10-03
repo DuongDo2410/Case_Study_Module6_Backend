@@ -14,7 +14,7 @@ const DayController = {
       let startDayFormat = moment(startDay);
       let mountDay = endDayFormat.diff(startDayFormat, "days");
       let home = await Home.findById(idHome); 
-      
+
       let day1 = {
         day: moment(startDayFormat)
       };
@@ -55,13 +55,21 @@ const DayController = {
       let endDayFormat = moment(endDay);
       let startDayFormat = moment(startDay);
       let mountDay = endDayFormat.diff(startDayFormat, "days");
-      console.log("mountDAY" + mountDay);
+
+      let day1 = {
+        day: moment(startDayFormat)
+      };
+      let checkDay = await Day.findOne(day1);
+      if (checkDay) {
+        days.push(checkDay)
+      }
+
       for (let i = mountDay; i > 0; i--) {
         amountAdd++;
         let day = {
           day: moment(startDayFormat).add(amountAdd, "days"),
         };
-        let checkDay = await Day.findOne({day: day.day})
+        let checkDay = await Day.findOne(day)
         if (checkDay) {
           days.push(checkDay);
         }

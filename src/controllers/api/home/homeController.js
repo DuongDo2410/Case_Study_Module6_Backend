@@ -112,9 +112,11 @@ const HomeController = {
 
   UpdateStatus: async (req, res) => {
     try {
+      console.log(123);
       let idHome = req.params.id
       let data = req.body;
-      let days = await DayController.checkDay(data)
+      let days = await DayController.checkDay(data);
+      console.log(days);
       days.forEach( async (day) => {
         await Home.updateOne(
         {_id: idHome},
