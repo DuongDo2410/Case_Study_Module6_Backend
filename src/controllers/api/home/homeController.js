@@ -1,13 +1,15 @@
 const Home = require("../../../models/home");
 const ImageController = require("./imageController");
 const DayController = require("./dayController");
+const Day = require("../../../models/day");
 
 const HomeController = {
   addHome: async (req, res) => {
     try {
       const data = req.body;
-      console.log("data", data);
-      await ImageController.addImage(data);
+      console.log("11111", data);
+      let idImage = await ImageController.addImage(data);
+      data.idImage = idImage;
       let home = await Home.create(data);
       console.log(home);
       res.status(200).json({ home });
@@ -19,7 +21,7 @@ const HomeController = {
   },
   getAll: async (req, res) => {
     try {
-      let homes = await Home.find({});
+      let homes = await Home.find({}).populate("idImage");
       res.status(200).json(homes);
     } catch (err) {
       res.status(500).json({
@@ -51,7 +53,7 @@ const HomeController = {
   showDetail: async (req, res) => {
     try {
       let idHome = req.params.id;
-      let checkHome = await Home.findById(idHome);
+      let checkHome = await Home.findById(idHome).populate("idImage", "link");
       if (!checkHome) {
         res.status(404).send({ errorMessage: "Home not found!!" });
       } else {
@@ -101,6 +103,35 @@ const HomeController = {
         price: { $gt: data?.min, $lt: data?.max },
       });
       res.status(200).send(Homes);
+    } catch (err) {
+      res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
+  showAllHouse: async (req, res) => {
+    try {
+      let homes = await Home.find().populate("idImage", "link");
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
+
+  UpdateStatus: async (req, res) => {
+    try {
+      console.log(123);
+      let idHome = req.params.id;
+      let data = req.body;
+      let days = await DayController.checkDay(data);
+      console.log(days);
+      days.forEach(async (day) => {
+        await Home.updateOne({ _id: idHome }, { $pull: { idDay: day._id } });
+      });
+      let newHome = await Home.findById(idHome);
+      res.status(200).json(newHome);
     } catch (err) {
       res.status(500).send({
         error: err.message,
