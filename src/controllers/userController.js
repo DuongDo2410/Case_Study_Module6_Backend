@@ -79,17 +79,6 @@ updateUserProfile = async (req, res) => {
   const user = await User.findOne({ _id: id });
   try {
     if (user) {
-      //   console.log("1", user);
-
-      //   user.username = req.body.username || user.username;
-      //   user.email = req.body.email || user.email;
-      //   user.address = req.body.address || user.address;
-      //   user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-      //   user.fullName = req.body.fullName || user.fullName;
-      //   user.avatar = req.body.avatar || user.avatar;
-      //   console.log("2", user);
-      //   const updateUser = await user.save();
-
       let data = req.body;
       console.log("2", data, id);
 
@@ -107,10 +96,29 @@ updateUserProfile = async (req, res) => {
     console.log(error);
   }
 };
-
+changePassword = async (req, res) => {
+  console.log("1111111111111111", req.decoded.id);
+  const user = await User.findById(req.decoded.id);
+  if (user) {
+    let comparePassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (comparePassword) {
+      user.password = await bcrypt.hash(req.body.newPassword, 10);
+      await user.save();
+      res.json("Change password successfully");
+    } else {
+      res.json("Wrong password");
+    }
+  } else {
+    res.json("User is not exist");
+  }
+};
 module.exports = {
   register,
   login,
   getUserProfile,
   updateUserProfile,
+  changePassword,
 };

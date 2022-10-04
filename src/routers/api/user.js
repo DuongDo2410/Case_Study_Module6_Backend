@@ -11,5 +11,6 @@ authRouter.post("/login", userController.login);
 authRouter.get("/profile", auth, userController.getUserProfile);
 
 authRouter.put("/updateProfile/:id", userController.updateUserProfile);
+authRouter.post("/changePassword", auth, userController.changePassword);
 
 module.exports = authRouter;
