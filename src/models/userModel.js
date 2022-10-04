@@ -30,7 +30,15 @@ const userSchema = mongoose.Schema({
     fullName:{
         type: String,
         // required: true
+    },
+    google: {
+
+        id: {
+
+            type: String,
+        }
     }
+
 
 })
 module.exports = mongoose.model('user', userSchema)

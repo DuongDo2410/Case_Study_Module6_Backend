@@ -56,6 +56,7 @@ login = async (req, res) => {
         // console.log(token);
         res.status(200).json({
           token: token,
+          user: user
         });
       }
     }
