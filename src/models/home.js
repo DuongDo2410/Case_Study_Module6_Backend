@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const {Schema} = require("mongoose");
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
 
 const homeSchema = new mongoose.Schema({
     name: String,
@@ -23,8 +23,8 @@ const homeSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-})
+});
 
-const Home = mongoose.model('Home', homeSchema);
+const Home = mongoose.model("Home", homeSchema);
 
 module.exports = Home;

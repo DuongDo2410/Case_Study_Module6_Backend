@@ -60,20 +60,10 @@ login = async (req, res) => {
   }
 };
 getUserProfile = async (req, res) => {
-  const user = await User.findById(req.params.id);
   try {
-    // console.log('aaa')
+    const user = await User.findById(req.decoded.id);
     if (user) {
-      console.log(user);
-      res.json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        address: user.address,
-        phoneNumber: user.phoneNumber,
-        fullName: user.fullName,
-        avatar: user.avatar,
-      });
+      res.status(200).json(user);
     } else {
       res.status(404).json({
         success: false,
@@ -85,28 +75,17 @@ getUserProfile = async (req, res) => {
   }
 };
 updateUserProfile = async (req, res) => {
-  const user = await User.findOne({ username: req.body.username });
+  let id = req.params.id;
+  const user = await User.findOne({ _id: id });
   try {
     if (user) {
-      user.username = req.body.username || user.username;
-      user.email = req.body.email || user.email;
-      user.address = req.body.address || user.address;
-      user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-      user.fullName = req.body.fullName || user.fullName;
-      user.avatar = req.body.avatar || user.avatar;
+      let data = req.body;
+      console.log("2", data, id);
 
-      const updateUser = await user.save();
-      res.json(
-        // _id: user.id,
-        // username: user.username,
-        // email: user.email,
-        // address: user.address,
-        // phoneNumber: user.phoneNumber,
-        // fullName: user.fullName,
-        // avatar: user.avatar,
-        // token: generateToken(updateUser._id)
-        updateUser
-      );
+      let newUser = await User.findOneAndUpdate({ _id: id }, data, {
+        new: true,
+      });
+      res.status(200).json(newUser);
     } else {
       res.status(404).json({
         success: false,
@@ -117,10 +96,29 @@ updateUserProfile = async (req, res) => {
     console.log(error);
   }
 };
-
+changePassword = async (req, res) => {
+  console.log("1111111111111111", req.decoded.id);
+  const user = await User.findById(req.decoded.id);
+  if (user) {
+    let comparePassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (comparePassword) {
+      user.password = await bcrypt.hash(req.body.newPassword, 10);
+      await user.save();
+      res.json("Change password successfully");
+    } else {
+      res.json("Wrong password");
+    }
+  } else {
+    res.json("User is not exist");
+  }
+};
 module.exports = {
   register,
   login,
   getUserProfile,
   updateUserProfile,
+  changePassword,
 };
