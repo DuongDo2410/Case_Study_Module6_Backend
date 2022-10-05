@@ -7,6 +7,7 @@ const BookingController = {
     try {
       let data = req.body;
       data.idRenter = req.decoded.id;
+      data.status = "PENDING";
       data.startDay = new Date(data.startDay);
       data.endDay = new Date(data.endDay);
       let startDayFormat = moment(data.startDay);
@@ -16,7 +17,7 @@ const BookingController = {
       for (let i = mountDay + 1; i > 0; i--) {
         amountAdd++;
         let day = moment(startDayFormat).add(amountAdd, "days");
-        let checkDay = await Day.findOne({ day: day });
+        let checkDay = await Day.findOne({ day: day, idHome: data.idHome });
         if (checkDay) {
           data.check = false;
           return res.status(404).json({
@@ -52,39 +53,69 @@ const BookingController = {
       console.log(error);
     }
   },
-  acceptBooking: async (req, res) => {
+  bookingPending: async (req, res) => {
     try {
       let idOwner = req.decoded.id;
-      let idHome = req.params.id;
-      let booking = await Booking.findOne({
+      let bookings = await Booking.find({
         idOwner: idOwner,
-        idHome: idHome,
+        status: "PENDING",
+      }).populate("idHome");
+      res.status(200).json({
+        message: "success",
+        bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  acceptBooking: async (req, res) => {
+    try {
+      let idBooking = req.params.id;
+      let idHome = req.body.idHome;
+      let booking = await Booking.findOne({
+        _id: idBooking,
       });
       let startDayFormat = moment(booking.startDay);
       let endDayFormat = moment(booking.endDay);
       let mountDay = endDayFormat.diff(startDayFormat, "days");
       let amountAdd = -1;
+      let check = {};
+      let days = [];
       for (let i = mountDay + 1; i > 0; i--) {
         amountAdd++;
         let day = moment(startDayFormat).add(amountAdd, "days");
-        let houseDay = {
-          day: day,
-          status: "LEASE",
-          idHome: booking.idHome,
-        };
-        await Day.create(houseDay);
-      }
-      booking = await Booking.findByIdAndUpdate(
-        { _id: booking._id },
-        { status: "ACCEPTED" },
-        {
-          new: true,
+        days.push(day);
+        let checkDay = await Day.findOne({ day: day, idHome: idHome });
+        if (checkDay) {
+          check.flag = false;
+          return res.status(404).json({
+            message: "Accept false.Date already exists!",
+          });
+        } else {
+          check.flag = true;
         }
-      );
-      res.status(200).json({
-        message: "Update success!",
-        booking: booking,
-      });
+      }
+      if (check.flag) {
+        days.forEach(async (day) => {
+          let houseDay = {
+            day: day,
+            status: "LEASE",
+            idHome: booking.idHome,
+          };
+          await Day.create(houseDay);
+        });
+        booking = await Booking.findByIdAndUpdate(
+          { _id: booking._id },
+          { status: "ACCEPTED" },
+          {
+            new: true,
+          }
+        );
+        res.status(200).json({
+          message: "Accept success!",
+          booking: booking,
+        });
+      }
     } catch (error) {
       console.log(error);
     }

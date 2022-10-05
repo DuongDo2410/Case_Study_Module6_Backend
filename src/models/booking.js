@@ -17,6 +17,7 @@ const bookingSchema = new mongoose.Schema({
   startDay: Date,
   endDay: Date,
   status: String,
+  totalMoney: String,
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
