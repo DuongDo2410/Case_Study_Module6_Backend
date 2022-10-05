@@ -7,6 +7,7 @@ const HomeController = {
   addHome: async (req, res) => {
     try {
       const data = req.body;
+      console.log("11111", data);
       let idImage = await ImageController.addImage(data);
       data.idImage = idImage;
       let home = await Home.create(data);
@@ -18,7 +19,16 @@ const HomeController = {
       });
     }
   },
-
+  getAll: async (req, res) => {
+    try {
+      let homes = await Home.find({}).populate("idImage");
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  },
   deleteHome: async (req, res) => {
     try {
       let idHome = req.params.id;
@@ -43,7 +53,7 @@ const HomeController = {
   showDetail: async (req, res) => {
     try {
       let idHome = req.params.id;
-      let checkHome = await Home.findById(idHome).populate('idImage', 'link');
+      let checkHome = await Home.findById(idHome).populate("idImage", "link");
       if (!checkHome) {
         res.status(404).send({ errorMessage: "Home not found!!" });
       } else {
@@ -101,7 +111,7 @@ const HomeController = {
   },
   showAllHouse: async (req, res) => {
     try {
-      let homes = await Home.find().populate('idImage', 'link');
+      let homes = await Home.find().populate("idImage", "link");
       res.status(200).json(homes);
     } catch (err) {
       res.status(500).send({
@@ -113,17 +123,14 @@ const HomeController = {
   UpdateStatus: async (req, res) => {
     try {
       console.log(123);
-      let idHome = req.params.id
+      let idHome = req.params.id;
       let data = req.body;
       let days = await DayController.checkDay(data);
       console.log(days);
-      days.forEach( async (day) => {
-        await Home.updateOne(
-        {_id: idHome},
-        {$pull: {idDay: day._id}}
-        )
+      days.forEach(async (day) => {
+        await Home.updateOne({ _id: idHome }, { $pull: { idDay: day._id } });
       });
-      let newHome = await Home.findById(idHome)
+      let newHome = await Home.findById(idHome);
       res.status(200).json(newHome);
     } catch (err) {
       res.status(500).send({

@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true,
+
     },
     phoneNumber: {
         type: Number,
@@ -37,8 +38,11 @@ const userSchema = mongoose.Schema({
 
             type: String,
         }
+    },
+    role:{
+        type: String,
+        required: true
     }
-
 
 })
 module.exports = mongoose.model('user', userSchema)

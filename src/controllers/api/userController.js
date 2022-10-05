@@ -11,7 +11,6 @@ const otpModel = require("../../models/otp");
 register = async (req, res) => {
   try {
     let user = req.body;
-    console.log(user)
     let username = await User.findOne({ username: user.username });
     if (!username) {
       user.password = await bcrypt.hash(user.password, 10);
@@ -38,6 +37,7 @@ login = async (req, res) => {
     } else {
       let password = user.password;
       let comparePassword = await bcrypt.compare(loginForm.password, password);
+      console.log(comparePassword);
       if (!comparePassword) {
         res.status(401).json({
           message: "password is wrong",
@@ -53,10 +53,9 @@ login = async (req, res) => {
           expiresIn: 36000 * 36000 * 100,
         });
 
-        // console.log(token);
+        console.log(token);
         res.status(200).json({
           token: token,
-          user: user
         });
       }
     }
@@ -65,19 +64,10 @@ login = async (req, res) => {
   }
 };
 getUserProfile = async (req, res) => {
-  const user = await User.findById(req.params.id);
   try {
-    // console.log('aaa')
+    const user = await User.findById(req.decoded.id);
     if (user) {
-      res.json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        address: user.address,
-        phoneNumber: user.phoneNumber,
-        fullName: user.fullName,
-        avatar: user.avatar,
-      });
+      res.status(200).json(user);
     } else {
       res.status(404).json({
         success: false,
@@ -89,29 +79,44 @@ getUserProfile = async (req, res) => {
   }
 };
 updateUserProfile = async (req, res) => {
-  const user = await User.findOne({ username: req.body.username });
+  let id = req.params.id;
+  const user = await User.findOne({ _id: id });
   try {
     if (user) {
-      user.username = req.body.username || user.username;
-      user.email = req.body.email || user.email;
-      user.address = req.body.address || user.address;
-      user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-      user.fullName = req.body.fullName || user.fullName;
-      user.avatar = req.body.avatar || user.avatar;
+      let data = req.body;
+      console.log("2", data, id);
 
-          const updateUser = await user.save();
-          res.json(
-              updateUser
-          )
-
-      }else {
-          res.status(404).json({
-              success: false,
-              msg: 'User not found'
-          })
-      }
-  }catch (error){
-      console.log(error)
+      let newUser = await User.findOneAndUpdate({ _id: id }, data, {
+        new: true,
+      });
+      res.status(200).json(newUser);
+    } else {
+      res.status(404).json({
+        success: false,
+        msg: "User not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+changePassword = async (req, res) => {
+  console.log("1111111111111111", req.decoded.id);
+  const user = await User.findById(req.decoded.id);
+  if (user) {
+    let comparePassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (comparePassword) {
+      user.password = await bcrypt.hash(req.body.newPassword, 10);
+      await user.save();
+      res.json("Change password successfully");
+    } else {
+      res.json("Wrong password");
+    }
+  } else {
+    res.json("User is not exist");
   }
 }
 forgotPassword = async (req, res)=>{
