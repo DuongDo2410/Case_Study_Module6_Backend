@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const express = require("express");
 const userController = require("../../controllers/api/userController");
+const passport = require("passport") ;
 // const router = express.Router();
 const authRouter = Router();
 authRouter.post("/register", userController.register);
@@ -16,6 +17,8 @@ authRouter.post("/otp", userController.sendOTP);
 authRouter.post("/forgetPass", userController.checkOTP);
 
 authRouter.post("/changePassword", userController.changePassword);
+
+
 
 
 
