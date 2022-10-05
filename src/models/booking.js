@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-  idHost: {
+  idOwner: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
@@ -17,6 +17,7 @@ const bookingSchema = new mongoose.Schema({
   startDay: Date,
   endDay: Date,
   status: String,
+  totalMoney: String,
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
