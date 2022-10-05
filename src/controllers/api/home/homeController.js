@@ -82,7 +82,7 @@ const HomeController = {
     }
   },
 
-  fiterHome: async (req, res) => {
+  filterHome: async (req, res) => {
     try {
       let data = req.body;
       console.log(address);
@@ -109,10 +109,10 @@ const HomeController = {
       });
     }
   },
-  
+
   showTop5House: async (req, res) => {
     try {
-      let top5 = await Home.find().populate('idImage', 'link').sort({view: -1}).limit(5);
+      let top5 = await Home.find().populate('idImage', 'link').sort({ view: -1 }).limit(5);
       res.status(200).json(top5);
     } catch (err) {
       res.status(500).send({
@@ -121,17 +121,17 @@ const HomeController = {
     }
   },
 
-  UpdateStatus: async (req, res) => {
+  updateStatus: async (req, res) => {
     try {
       console.log(123);
       let idHome = req.params.id
       let data = req.body;
       let days = await DayController.checkDay(data);
       console.log(days);
-      days.forEach( async (day) => {
+      days.forEach(async (day) => {
         await Home.updateOne(
-        {_id: idHome},
-        {$pull: {idDay: day._id}}
+          { _id: idHome },
+          { $pull: { idDay: day._id } }
         )
       });
       let newHome = await Home.findById(idHome)
