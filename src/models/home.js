@@ -10,6 +10,11 @@ const homeSchema = new mongoose.Schema({
     amountBathroom: Number,
     description: String,
     price: Number,
+    view: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     idImage: [{
         type: Schema.Types.ObjectId,
         ref: 'Image'
