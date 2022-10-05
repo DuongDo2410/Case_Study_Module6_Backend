@@ -63,6 +63,28 @@ login = async (req, res) => {
     console.log("error");
   }
 };
+loginWithGoogle = async (req,res, next)=>{
+try {
+  let data = req.body;
+  console.log(data.googleId);
+  let checkUser = await User.findOne({idGoogle:data.googleId});
+  console.log(checkUser)
+
+  if (!checkUser) {
+    let user = {
+      idGoogle: data.googleId,
+      email: data.email,
+      fullName: data.name,
+      username: data.name,
+      avatar: data.imageUrl
+    }
+    checkUser = await User.create(user);
+  }
+    res.status(200).json(checkUser)
+}catch (err){
+  console.log(err)
+}
+}
 getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.decoded.id);
@@ -202,5 +224,6 @@ module.exports = {
   updateUserProfile,
   sendOTP,
   checkOTP,
-  changePassword
+  changePassword,
+  loginWithGoogle
 }

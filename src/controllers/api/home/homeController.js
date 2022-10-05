@@ -119,6 +119,17 @@ const HomeController = {
       });
     }
   },
+  
+  showTop5House: async (req, res) => {
+    try {
+      let top5 = await Home.find().populate('idImage', 'link').sort({view: -1}).limit(5);
+      res.status(200).json(top5);
+    } catch (err) {
+      res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
 
   UpdateStatus: async (req, res) => {
     try {

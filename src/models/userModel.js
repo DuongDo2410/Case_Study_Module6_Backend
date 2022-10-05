@@ -12,11 +12,10 @@ const userSchema = mongoose.Schema({
 
     password: {
         type: String,
-        required: true,
-
+        // required: true,
     },
     phoneNumber: {
-        type: Number,
+        type: String,
         // required: true
 
     },
@@ -32,16 +31,12 @@ const userSchema = mongoose.Schema({
         type: String,
         // required: true
     },
-    google: {
+    idGoogle:String,
 
-        id: {
-
-            type: String,
-        }
-    },
     role:{
         type: String,
-        required: true
+        // required: true
+        default: "user"
     }
 
 })

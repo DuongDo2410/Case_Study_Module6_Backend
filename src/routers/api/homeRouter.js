@@ -11,5 +11,6 @@ homeRouter.get("", HomeController.getAll);
 homeRouter.get("/:id", HomeController.showDetail);
 homeRouter.get("/find/home", HomeController.fiterHome);
 homeRouter.get("", HomeController.showAllHouse);
+homeRouter.get("show/top5", HomeController.showTop5House);
 
 module.exports = homeRouter;

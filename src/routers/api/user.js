@@ -20,6 +20,9 @@ authRouter.post("/forgetPass", userController.checkOTP);
 
 authRouter.post("/changePassword", userController.changePassword);
 
+authRouter.post("/loginGoogle",userController.loginWithGoogle);
+
+
 
 
 
