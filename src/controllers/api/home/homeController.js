@@ -95,14 +95,18 @@ const HomeController = {
   filterHome: async (req, res) => {
     try {
       let data = req.body;
-      console.log(address);
-      let Homes = await Home.find({
-        address: { $regex: data?.address },
-        amountBedroom: data?.amountBedroom,
-        amountBathroom: data?.amountBathroom,
-        price: { $gt: data?.min, $lt: data?.max },
+      console.log(data);
+      let homes = await Home.find({
+        address: { $regex: data?.address || ''},
+        amountBedroom: data?.amountBedroom || {$gt: data.amountBedroom = 0},
+        amountBathroom: data?.amountBathroom || {$gt: data.amountBathroom = 0},
+        price: { $gt: data?.min || 0, $lt: data?.max || 1000000000},
       });
-      res.status(200).send(Homes);
+      if (data.startDay && data.endDay) {
+        let homes1 = await DayController.check(data, homes); 
+        console.log(homes1);
+      } 
+      res.status(200).send(homes);
     } catch (err) {
       res.status(500).send({
         error: err.message,

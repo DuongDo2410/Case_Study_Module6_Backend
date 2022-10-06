@@ -10,8 +10,6 @@ const generateToken = (id) => {
 const SECRET_KEY = "duckies";
 const auth = (req, res, next) => {
   let authorization = req.headers.authorization;
-  console.log(authorization);
-  console.log(process.env.SECRET_KEY);
   if (authorization) {
     let accessToken = authorization.split(" ")[1];
     if (!accessToken) {
