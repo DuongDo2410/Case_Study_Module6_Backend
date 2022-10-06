@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.use("/auth", userRouter);
 router.use("/homes", homeRouter);
-router.use("/day", dayRouter);
+// router.use("/day", dayRouter);
 router.use("/booking", bookingRouter);
 // routes.use('/city', cityRouter)
 // routes.use('/district', districtRouter)
