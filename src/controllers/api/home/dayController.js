@@ -6,6 +6,7 @@ const { check } = require("express-validator");
 const DayController = {
   createDay: async (data) => {
     try {
+      // let idHome = req.params.id;
       let arrDay = [];
       let data = req.body;
       let amountAdd = 0;
@@ -14,13 +15,15 @@ const DayController = {
       let endDayFormat = moment(endDay);
       let startDayFormat = moment(startDay);
       let mountDay = endDayFormat.diff(startDayFormat, "days");
+      let home = await Home.findById(idHome);
 
       let day1 = {
-        day: moment(startDayFormat)
+        day: moment(startDayFormat),
       };
       let createDay = await Day.create(day1);
+
       arrDay.push(createDay);
-      
+
       for (let i = mountDay; i > 0; i--) {
         amountAdd++;
         let days = {
@@ -28,7 +31,6 @@ const DayController = {
         };
         let createDay1 = await Day.create(days);
         arrDay.push(createDay1);
-
       }
       return arrDay;
     } catch (err) {
@@ -47,11 +49,12 @@ const DayController = {
       let mountDay = endDayFormat.diff(startDayFormat, "days");
 
       let day1 = {
-        day: moment(startDayFormat)
+        day: moment(startDayFormat),
       };
       let checkDay = await Day.findOne(day1);
       if (checkDay) {
-        checkDay.updateOne({status: data.status})
+        days.push(checkDay);
+        checkDay.updateOne({ status: data.status });
       }
 
       for (let i = mountDay; i > 0; i--) {
@@ -59,12 +62,12 @@ const DayController = {
         let day = {
           day: moment(startDayFormat).add(amountAdd, "days"),
         };
-        let checkDay = await Day.findOne(day)
+        let checkDay = await Day.findOne(day);
         if (checkDay) {
-          checkDay.updateOne({status: data.status})
+          checkDay.updateOne({ status: data.status });
         }
       }
-      return days
+      return days;
     } catch (err) {
       console.log(err);
     }
