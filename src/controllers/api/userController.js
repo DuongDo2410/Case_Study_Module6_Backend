@@ -52,8 +52,6 @@ login = async (req, res) => {
         let token = jwt.sign(payload, process.env.SECRET_KEY, {
           expiresIn: 36000 * 36000 * 100,
         });
-
-        console.log(token);
         res.status(200).json({
           token: token,
         });
@@ -66,9 +64,7 @@ login = async (req, res) => {
 loginWithGoogle = async (req,res, next)=>{
 try {
   let data = req.body;
-  console.log(data.googleId);
   let checkUser = await User.findOne({idGoogle:data.googleId});
-  console.log(checkUser)
 
   if (!checkUser) {
     let user = {
@@ -80,7 +76,18 @@ try {
     }
     checkUser = await User.create(user);
   }
-    res.status(200).json(checkUser)
+  let payload = {
+    id: checkUser._id,
+    fullName: checkUser.username,
+    role: checkUser.role,
+  };
+  let token = jwt.sign(payload, process.env.SECRET_KEY, {
+    expiresIn: 36000 * 36000 * 100,
+  });
+  res.status(200).json({
+    token: token,
+    user: checkUser
+  })
 }catch (err){
   console.log(err)
 }

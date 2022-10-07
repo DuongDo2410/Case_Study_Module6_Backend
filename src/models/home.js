@@ -19,11 +19,15 @@ const homeSchema = new mongoose.Schema({
     {
       type: Schema.Types.ObjectId,
       ref: "Image",
-    },
+    }
   ],
+  idImage: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Image'
+  }],
   idUser: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User'
   },
 });
 
