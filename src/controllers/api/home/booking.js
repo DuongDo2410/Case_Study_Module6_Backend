@@ -41,6 +41,7 @@ const BookingController = {
   historyBookingRenter: async (req, res) => {
     try {
       let idRenter = req.decoded.id;
+      console.log(req.decoded)
       let bookings = await Booking.find({
         idRenter: idRenter,
         status: "ACCEPTED",

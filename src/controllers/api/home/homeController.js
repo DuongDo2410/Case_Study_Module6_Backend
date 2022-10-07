@@ -7,7 +7,6 @@ const HomeController = {
   addHome: async (req, res) => {
     try {
       const data = req.body;
-      console.log("11111", data);
       let idImage = await ImageController.addImage(data);
       data.idImage = idImage;
       let home = await Home.create(data);

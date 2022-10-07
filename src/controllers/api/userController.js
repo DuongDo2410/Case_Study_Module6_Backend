@@ -43,7 +43,7 @@ login = async (req, res) => {
           message: "password is wrong",
         });
       } else {
-        console.log("1");
+        console.log(user.id);
         let payload = {
           id: user._id,
           username: user.username,
