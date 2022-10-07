@@ -5,7 +5,8 @@ const Home = require("../../../models/home");
 const DayController = {
   booking: async (req, res) => {
     try {
-      let idHome = req.params.id;
+      // let idHome = req.params.id;
+      let arrDay = [];
       let data = req.body;
       let amountAdd = 0;
       let endDay = new Date(data.endDay);
@@ -20,13 +21,15 @@ const DayController = {
       };
       let createDay = await Day.create(day1);
 
+      arrDay.push(createDay);
+
       for (let i = mountDay; i > 0; i--) {
         amountAdd++;
         let days = {
           day: moment(startDayFormat).add(amountAdd, "days"),
         };
-
-        let createDay = await Day.create(days);
+        let createDay1 = await Day.create(days);
+        arrDay.push(createDay1);
       }
       res.status(200).send("successfully");
     } catch (err) {
@@ -50,6 +53,7 @@ const DayController = {
       let checkDay = await Day.findOne(day1);
       if (checkDay) {
         days.push(checkDay);
+        checkDay.updateOne({ status: data.status });
       }
 
       for (let i = mountDay; i > 0; i--) {
@@ -59,10 +63,46 @@ const DayController = {
         };
         let checkDay = await Day.findOne(day);
         if (checkDay) {
-          days.push(checkDay);
+          checkDay.updateOne({ status: data.status });
         }
       }
       return days;
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  check: async (data, homes) => {
+    try {
+      console.log(1234);
+      let homeCheck = [];
+      let amountAdd = -1;
+      let startDayFormat = moment(new Date(data.startDay));
+      let endDayFormat = moment(new Date(data.endDay));
+      let mountDay = endDayFormat.diff(startDayFormat, "days");
+
+      for (let i = mountDay; i > 0; i--) {
+        amountAdd++;
+        let day = {
+          day: new Date(moment(startDayFormat).add(amountAdd, "days")),
+        };
+        homes.forEach(async (home) => {
+          let oke = true;
+          let days = await Day.find({
+            idHome: home._id
+          });
+          for(let i = 0; i < days.length; i++) {
+            if (days[i] === day.day) {
+              oke = false
+              break;
+            }
+          };
+          if(oke == true) {
+            homeCheck.push(home)
+          }
+        });
+      }
+      return homeCheck;
     } catch (err) {
       console.log(err);
     }

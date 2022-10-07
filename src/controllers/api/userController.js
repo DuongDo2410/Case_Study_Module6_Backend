@@ -66,9 +66,7 @@ login = async (req, res) => {
 loginWithGoogle = async (req,res, next)=>{
 try {
   let data = req.body;
-  console.log(data.googleId);
   let checkUser = await User.findOne({idGoogle:data.googleId});
-  console.log(checkUser)
 
   if (!checkUser) {
     let user = {
