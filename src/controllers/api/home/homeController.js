@@ -94,15 +94,13 @@ const HomeController = {
 
   filterHome: async (req, res) => {
     try {
-      console.log(666);
       let data = req.body;
-      console.log(data);
       let homes = await Home.find({
         address: { $regex: data?.address || ''},
         amountBedroom: data?.amountBedroom || {$gt: data.amountBedroom = 0},
         amountBathroom: data?.amountBathroom || {$gt: data.amountBathroom = 0},
         price: { $gt: data?.min || 0, $lt: data?.max || 1000000000},
-      });
+      }).populate('idImage');
       if (data.startDay && data.endDay) {
         let homes1 = await DayController.check(data, homes); 
         console.log(homes1);
