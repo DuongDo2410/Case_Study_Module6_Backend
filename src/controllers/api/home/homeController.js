@@ -93,6 +93,7 @@ const HomeController = {
 
   filterHome: async (req, res) => {
     try {
+      console.log(666);
       let data = req.body;
       console.log(data);
       let homes = await Home.find({
