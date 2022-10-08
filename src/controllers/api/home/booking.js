@@ -45,7 +45,10 @@ const BookingController = {
       let bookings = await Booking.find({
         idRenter: idRenter,
         status: "ACCEPTED",
-      }).populate("idOwner").populate('idRenter').populate("idHome");
+      })
+        .populate("idOwner")
+        .populate("idRenter")
+        .populate("idHome");
       res.status(200).json({
         message: "success",
         bookings: bookings,
@@ -60,6 +63,21 @@ const BookingController = {
       let bookings = await Booking.find({
         idOwner: idOwner,
         status: "PENDING",
+      }).populate("idHome");
+      res.status(200).json({
+        message: "success",
+        bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  bookingAcceptOwner: async (req, res) => {
+    try {
+      let idOwner = req.decoded.id;
+      let bookings = await Booking.find({
+        idOwner: idOwner,
+        status: "ACCEPTED",
       }).populate("idHome");
       res.status(200).json({
         message: "success",
