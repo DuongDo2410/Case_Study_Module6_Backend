@@ -98,15 +98,17 @@ const HomeController = {
       let data = req.body;
       console.log(data);
       let homes = await Home.find({
-        address: { $regex: data?.address || ''},
-        amountBedroom: data?.amountBedroom || {$gt: data.amountBedroom = 0},
-        amountBathroom: data?.amountBathroom || {$gt: data.amountBathroom = 0},
-        price: { $gt: data?.min || 0, $lt: data?.max || 1000000000},
-      });
+        address: { $regex: data?.address || "" },
+        amountBedroom: data?.amountBedroom || { $gt: (data.amountBedroom = 0) },
+        amountBathroom: data?.amountBathroom || {
+          $gt: (data.amountBathroom = 0),
+        },
+        price: { $gt: data?.min || 0, $lt: data?.max || 1000000000 },
+      }).populate("idImage");
       if (data.startDay && data.endDay) {
-        let homes1 = await DayController.check(data, homes); 
+        let homes1 = await DayController.check(data, homes);
         console.log(homes1);
-      } 
+      }
       res.status(200).send(homes);
     } catch (err) {
       res.status(500).send({
@@ -127,7 +129,10 @@ const HomeController = {
 
   showTop5House: async (req, res) => {
     try {
-      let top5 = await Home.find().populate('idImage', 'link').sort({ view: -1 }).limit(5);
+      let top5 = await Home.find()
+        .populate("idImage", "link")
+        .sort({ view: -1 })
+        .limit(5);
       res.status(200).json(top5);
     } catch (err) {
       res.status(500).send({
@@ -144,10 +149,7 @@ const HomeController = {
       let days = await DayController.checkDay(data);
       console.log(days);
       days.forEach(async (day) => {
-        await Home.updateOne(
-          { _id: idHome },
-          { $pull: { idDay: day._id } }
-        )
+        await Home.updateOne({ _id: idHome }, { $pull: { idDay: day._id } });
       });
       let newHome = await Home.findById(idHome);
       res.status(200).json(newHome);
