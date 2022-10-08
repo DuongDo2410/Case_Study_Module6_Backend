@@ -6,6 +6,7 @@ const bookingRouter = Router.Router();
 bookingRouter.use(auth);
 bookingRouter.get("/historyRenter", BookingController.historyBookingRenter);
 bookingRouter.get("/booking-pending", BookingController.bookingPending);
+bookingRouter.get("/booking-accept", BookingController.bookingAcceptOwner);
 bookingRouter.post("", BookingController.booking);
 bookingRouter.post("/cancel/:id", BookingController.cancelBooking);
 bookingRouter.post("/accept/:id", BookingController.acceptBooking);
