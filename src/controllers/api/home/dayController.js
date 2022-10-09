@@ -83,23 +83,24 @@ const DayController = {
 
       for (let a = 0; a < homes.length; a++) {
         let oke = true;
-        for (let i = mountDay; i > 0; i--) {
+        for (let i = mountDay; i >= 0; i--) {
           amountAdd++;
           let day = {
-            day: new Date(moment(startDayFormat).add(amountAdd, "days")),
+            day: new Date(moment(startDayFormat).add(amountAdd, "days")).toLocaleDateString,
           };
           let days = await Day.find({
             idHome: homes[a]._id
           });
-          for (let j = 0; j < days.length; j++) {
-            console.log('day', day.day);
-            console.log('days', days[j].day);
-            if (days[j].day == day.day) {
-              console.log(1);
-              oke = false
-              break;
-            }
-          };
+          if (days) {
+            for (let j = 0; j < days.length; j++) {
+              console.log('day', day.day);
+            console.log('days', days[j].day.toLocaleTimeString);
+              if (days[j].day.toLocaleDateString === day.day) {
+                oke = false
+                break;
+              }
+            };
+          }
         };
         if (oke === true) {
           homeCheck.push(homes[a])
