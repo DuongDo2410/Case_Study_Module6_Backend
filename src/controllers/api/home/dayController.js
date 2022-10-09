@@ -75,34 +75,37 @@ const DayController = {
 
   check: async (data, homes) => {
     try {
-      console.log(1234);
       let homeCheck = [];
       let amountAdd = -1;
       let startDayFormat = moment(new Date(data.startDay));
       let endDayFormat = moment(new Date(data.endDay));
       let mountDay = endDayFormat.diff(startDayFormat, "days");
 
-      for (let i = mountDay; i > 0; i--) {
-        amountAdd++;
-        let day = {
-          day: new Date(moment(startDayFormat).add(amountAdd, "days")),
-        };
-        homes.forEach(async (home) => {
-          let oke = true;
+      for (let a = 0; a < homes.length; a++) {
+        let oke = true;
+        for (let i = mountDay; i > 0; i--) {
+          amountAdd++;
+          let day = {
+            day: new Date(moment(startDayFormat).add(amountAdd, "days")),
+          };
           let days = await Day.find({
-            idHome: home._id
+            idHome: homes[a]._id
           });
-          for(let i = 0; i < days.length; i++) {
-            if (days[i] === day.day) {
+          for (let j = 0; j < days.length; j++) {
+            console.log('day', day.day);
+            console.log('days', days[j].day);
+            if (days[j].day == day.day) {
+              console.log(1);
               oke = false
               break;
             }
           };
-          if(oke == true) {
-            homeCheck.push(home)
-          }
-        });
-      }
+        };
+        if (oke === true) {
+          homeCheck.push(homes[a])
+        }
+      };
+      console.log(homeCheck.length);
       return homeCheck;
     } catch (err) {
       console.log(err);

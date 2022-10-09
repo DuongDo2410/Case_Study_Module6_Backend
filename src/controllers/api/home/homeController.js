@@ -102,8 +102,8 @@ const HomeController = {
         price: { $gt: data?.min || 0, $lt: data?.max || 1000000000},
       }).populate('idImage');
       if (data.startDay && data.endDay) {
-        let homes1 = await DayController.check(data, homes); 
-        console.log(homes1);
+        let homes1 = await DayController.check(data, homes);
+        homes = homes1;
       } 
       res.status(200).send(homes);
     } catch (err) {
@@ -125,7 +125,7 @@ const HomeController = {
 
   showTop5House: async (req, res) => {
     try {
-      let top5 = await Home.find().populate('idImage', 'link').sort({ view: -1 }).limit(5);
+      let top5 = await Home.find().populate('idImage').sort({ view: -1 }).limit(5);
       res.status(200).json(top5);
     } catch (err) {
       res.status(500).send({
