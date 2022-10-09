@@ -10,6 +10,10 @@ const homeSchema = new mongoose.Schema({
   amountBathroom: Number,
   description: String,
   price: Number,
+  rating: {
+    type: Number,
+    default: 0
+  },
   view: {
     type: Number,
     required: true,

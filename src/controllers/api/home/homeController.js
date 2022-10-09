@@ -64,6 +64,25 @@ const HomeController = {
       });
     }
   },
+  ratingHome: async (req, res) => {
+    try {
+      let idHome = req.params.id;
+      let checkHome = await Home.findById(idHome);
+
+      let ratingHouse = req.body.rating;
+      if (!checkHome) {
+        res.status(404).send({ errorMessage: "Home not found!!" });
+      } else {
+        checkHome.rating = ratingHouse;
+        await checkHome.save();
+        res.status(200).send({ checkHome });
+      }
+    } catch (err) {
+      res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
 
   updateHome: async (req, res) => {
     try {
