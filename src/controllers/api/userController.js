@@ -43,17 +43,24 @@ login = async (req, res) => {
           message: "password is wrong",
         });
       } else {
-        console.log("1");
         let payload = {
           id: user._id,
-          username: user.username,
           role: user.role,
+        };
+        let currentUser = {
+          fullName: user?.fullName,
+          avatar: user?.avatar,
+          role: user?.role,
+          phoneNumber: user?.phoneNumber,
+          email: user?.email,
+          address: user?.address
         };
         let token = jwt.sign(payload, process.env.SECRET_KEY, {
           expiresIn: 36000 * 36000 * 100,
         });
         res.status(200).json({
           token: token,
+          user: currentUser
         });
       }
     }
@@ -71,8 +78,8 @@ try {
       idGoogle: data.googleId,
       email: data.email,
       fullName: data.name,
-      username: data.name,
-      avatar: data.imageUrl
+      avatar: data.imageUrl,
+      address: data.address,
     }
     checkUser = await User.create(user);
   }
@@ -96,7 +103,15 @@ getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.decoded.id);
     if (user) {
-      res.status(200).json(user);
+      let currentUser = {
+        fullName: user.fullName,
+        avatar: user.avatar,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        address: user.address
+      };
+      res.status(200).json(currentUser);
     } else {
       res.status(404).json({
         success: false,
@@ -108,17 +123,24 @@ getUserProfile = async (req, res) => {
   }
 };
 updateUserProfile = async (req, res) => {
-  let id = req.params.id;
-  const user = await User.findOne({ _id: id });
   try {
+    let id = req.decoded.id;
+    const user = await User.findOne({ _id: id });
     if (user) {
       let data = req.body;
-      console.log("2", data, id);
-
+      console.log(data);
       let newUser = await User.findOneAndUpdate({ _id: id }, data, {
         new: true,
       });
-      res.status(200).json(newUser);
+      let currentUser = {
+        fullName: newUser.fullName,
+        avatar: newUser.avatar,
+        role: newUser.role,
+        phoneNumber: newUser.phoneNumber,
+        email: newUser.email,
+        address: newUser.address
+      };
+      res.status(200).json(currentUser);
     } else {
       res.status(404).json({
         success: false,

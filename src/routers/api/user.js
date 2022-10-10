@@ -4,27 +4,19 @@ const userController = require("../../controllers/api/userController");
 const passport = require("passport") ;
 const { auth } = require("../../middlewares/auth");
 // const router = express.Router();
-const authRouter = Router();
-authRouter.post("/register", userController.register);
+const userRouter = Router();
 
-authRouter.post("/login", userController.login);
-
-authRouter.get("/profile", auth, userController.getUserProfile);
-
-authRouter.put("/updateProfile/:id", userController.updateUserProfile);
-authRouter.post("/changePassword", auth, userController.changePassword);
-
-authRouter.post("/otp", userController.sendOTP);
-
-authRouter.post("/forgetPass", userController.checkOTP);
-
-authRouter.post("/changePassword", userController.changePassword);
-
-authRouter.post("/loginGoogle",userController.loginWithGoogle);
+userRouter.use(auth);
+userRouter.get("/profile", userController.getUserProfile);
+userRouter.put("/updateProfile", userController.updateUserProfile);
+userRouter.post("/changePassword", userController.changePassword);
+userRouter.post("/otp", userController.sendOTP);
+userRouter.post("/forgetPass", userController.checkOTP);
+userRouter.post("/changePassword", userController.changePassword);
 
 
 
 
 
 
-module.exports = authRouter;
+module.exports = userRouter;
