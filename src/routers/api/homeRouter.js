@@ -12,6 +12,7 @@ homeRouter.get("/:id", HomeController.showDetail);
 homeRouter.put("/:id", HomeController.updateHome);
 homeRouter.put("/:id", HomeController.updateStatus);
 homeRouter.delete("/:id", HomeController.deleteHome);
+homeRouter.post("/comments/:id", HomeController.updateComment)
 
 module.exports = homeRouter;
     
