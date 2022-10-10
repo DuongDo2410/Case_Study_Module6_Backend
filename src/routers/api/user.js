@@ -13,10 +13,6 @@ userRouter.post("/changePassword", userController.changePassword);
 userRouter.post("/otp", userController.sendOTP);
 userRouter.post("/forgetPass", userController.checkOTP);
 userRouter.post("/changePassword", userController.changePassword);
-
-
-
-
-
+userRouter.post("/getStatistics", userController.getStatistics);
 
 module.exports = userRouter;

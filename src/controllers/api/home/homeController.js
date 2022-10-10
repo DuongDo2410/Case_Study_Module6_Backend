@@ -7,7 +7,6 @@ const HomeController = {
   addHome: async (req, res) => {
     try {
       const data = req.body;
-      console.log("11111", data);
       let idImage = await ImageController.addImage(data);
       data.idImage = idImage;
       let home = await Home.create(data);
@@ -32,7 +31,7 @@ const HomeController = {
   deleteHome: async (req, res) => {
     try {
       let idHome = req.params.id;
-      let checkHome = await Home.findById(idHome);
+      let checkHome = await Home.findById(idHome).populate("idImage");
       if (!checkHome) {
         res.status(404).send({ errorMessage: "Home not found!!" });
       } else {
@@ -50,6 +49,19 @@ const HomeController = {
     }
   },
 
+  updateComment: async (req, res) => {
+    try {
+      let id = req.params.id;
+      // console.log(req.body.comment)
+      const home = await Home.findById(id).populate("idImage");
+      home.comment.unshift(req.body.comment)
+      await home.save();
+      res.status(200).json(home);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
+
   showDetail: async (req, res) => {
     try {
       let idHome = req.params.id;
@@ -57,6 +69,25 @@ const HomeController = {
       if (!checkHome) {
         res.status(404).send({ errorMessage: "Home not found!!" });
       } else {
+        res.status(200).send({ checkHome });
+      }
+    } catch (err) {
+      res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
+  ratingHome: async (req, res) => {
+    try {
+      let idHome = req.params.id;
+      let checkHome = await Home.findById(idHome);
+
+      let ratingHouse = req.body.rating;
+      if (!checkHome) {
+        res.status(404).send({ errorMessage: "Home not found!!" });
+      } else {
+        checkHome.rating = ratingHouse;
+        await checkHome.save();
         res.status(200).send({ checkHome });
       }
     } catch (err) {

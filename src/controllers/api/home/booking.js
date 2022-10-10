@@ -41,7 +41,6 @@ const BookingController = {
   historyBookingRenter: async (req, res) => {
     try {
       let idRenter = req.decoded.id;
-      console.log(idRenter);
       let bookings = await Booking.find({
         idRenter: idRenter,
         status: "ACCEPTED",
@@ -171,5 +170,18 @@ const BookingController = {
       console.log(error);
     }
   },
+  getBookingByIdUser: async (id, data) => {
+    try {
+      const startDay = new Date(data.startDay)
+      const endDay = new Date(data.endDay)
+      let booking = await Booking.find({
+        idOwner: id,
+        dayCreate: { $gt: startDay, $lt: endDay },
+      });
+      return booking
+    } catch (error) {
+      console.log(error);
+    }
+  }
 };
 module.exports = BookingController;

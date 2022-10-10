@@ -7,6 +7,8 @@ require ("dotenv")
 const Process = require("process");
 const nodemailer = require("nodemailer");
 const otpModel = require("../../models/otp");
+const BookingController = require("./home/booking");
+const DayController = require("./home/dayController");
 
 register = async (req, res) => {
   try {
@@ -244,6 +246,19 @@ changePassword = async (req, res) => {
   }else {
     res.json("User is not exist");
   }
+};
+
+getStatistics = (req, res) => {
+  try {
+    const id = req.decoded.id
+    const data = req.body
+    const bookings = BookingController.getBookingByIdUser(id, data);
+    return res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({
+      message: error
+    })
+  }
 }
 
 module.exports = {
@@ -254,5 +269,6 @@ module.exports = {
   sendOTP,
   checkOTP,
   changePassword,
-  loginWithGoogle
+  loginWithGoogle,
+  getStatistics
 }
