@@ -1,6 +1,8 @@
 const moment = require("moment");
 const Booking = require("../../../models/booking");
 const Day = require("../../../models/day");
+const Notification = require("../../../models/notification");
+const notificationController = require("./Notification");
 
 const BookingController = {
   booking: async (req, res) => {
@@ -29,6 +31,7 @@ const BookingController = {
       }
       if (data.check) {
         let booking = await Booking.create(data);
+        await notificationController.add(); 
         res.status(200).json({
           message: "Create success",
           booking: booking,

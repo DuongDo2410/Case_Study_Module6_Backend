@@ -1,6 +1,6 @@
 const Notification = require("../../../models/notification");
 
-const ImageController = {
+const notificationController = {
     getAll: async (req, res) => {
         try {
             let id = req.params.id
@@ -27,4 +27,4 @@ const ImageController = {
         }
     },
 };
-module.exports = ImageController;
+module.exports = notificationController;
