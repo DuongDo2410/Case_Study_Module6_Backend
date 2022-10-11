@@ -6,7 +6,9 @@ const Day = require("../../../models/day");
 const HomeController = {
   addHome: async (req, res) => {
     try {
+      const idUser = req.decoded.id
       const data = req.body;
+      data.idUser = idUser
       let idImage = await ImageController.addImage(data);
       data.idImage = idImage;
       let home = await Home.create(data);

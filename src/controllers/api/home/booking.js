@@ -172,15 +172,16 @@ const BookingController = {
   },
   getBookingByWeek: async (id) => {
     try {
-      const firstDayWeek = new Date(moment().startOf('week').format('dddd YYYY-MM-DD'));
+      let day = moment().startOf('week').format("YYYY-MM-DD 23:59:59");
+      const firstDayWeek = new Date(day);
       const toDay = new Date();
       let bookings = await Booking.find({
         idOwner: id,
-        dayCreate: { $gt: firstDayWeek, $lt: toDay },
-        status: "ACCEPTED"
+        createdAt: { $gt: firstDayWeek, $lte: toDay },
+        status: "SUCCESS"
       });
       let totalMoney = bookings.reduce((total, booking) => {
-        return total + booking.totalMoney
+        return total += Math.round(booking.totalMoney);
       }, 0);
       return totalMoney
     } catch (error) {
@@ -189,16 +190,18 @@ const BookingController = {
   },
   getBookingByMonth: async (id) => { 
     try {
-      const firstDayWeek = new Date(moment().startOf('month').format('dddd YYYY-MM-DD'));
+      let day = moment().startOf('month').format("YYYY-MM-DD 23:59:59");
+      const firstDayMonth = new Date(day);
       const toDay = new Date();
       let bookings = await Booking.find({
         idOwner: id,
-        dayCreate: { $gt: firstDayWeek, $lt: toDay },
-        status: "ACCEPTED"
+        createdAt: { $gt: firstDayMonth, $lte: toDay },
+        status: "SUCCESS"
       });
       let totalMoney = bookings.reduce((total, booking) => {
-        return total + booking.totalMoney
+        return total += Math.round(booking.totalMoney);
       }, 0);
+      console.log(totalMoney);
       return totalMoney
     } catch (error) {
       console.log(error);

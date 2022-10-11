@@ -39,7 +39,6 @@ login = async (req, res) => {
     } else {
       let password = user.password;
       let comparePassword = await bcrypt.compare(loginForm.password, password);
-      console.log(comparePassword);
       if (!comparePassword) {
         res.status(401).json({
           message: "password is wrong",

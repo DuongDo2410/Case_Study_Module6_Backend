@@ -14,16 +14,13 @@ const bookingSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Home",
   },
-  dayCreate: {
-    type: Date,
-    required: true,
-    default: new Date(),
-  },
   startDay: Date,
   endDay: Date,
   status: String,
   totalMoney: String,
-});
+
+},{timestamps: true});
+
 
 const Booking = mongoose.model("Booking", bookingSchema);
 
