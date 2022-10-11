@@ -11,10 +11,6 @@ const homeSchema = new mongoose.Schema({
   description: String,
   price: Number,
   comment: [],
-  rating: {
-    type: Number,
-    default: 0
-  },
   view: {
     type: Number,
     required: true,
@@ -34,6 +30,14 @@ const homeSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
+  rating:{
+    type: Number,
+    default: 0,
+  },
+  ratingCount:{
+    type: Number,
+    default: 0,
+  }
 });
 
 const Home = mongoose.model("Home", homeSchema);
