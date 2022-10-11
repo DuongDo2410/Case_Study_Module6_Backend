@@ -170,18 +170,50 @@ const BookingController = {
       console.log(error);
     }
   },
-  getBookingByIdUser: async (id, data) => {
+  getBookingByWeek: async (id) => {
     try {
-      const startDay = new Date(data.startDay)
-      const endDay = new Date(data.endDay)
-      let booking = await Booking.find({
+      const firstDayWeek = new Date(moment().startOf('week').format('dddd YYYY-MM-DD'));
+      const toDay = new Date();
+      let bookings = await Booking.find({
         idOwner: id,
-        dayCreate: { $gt: startDay, $lt: endDay },
+        dayCreate: { $gt: firstDayWeek, $lt: toDay },
+        status: "ACCEPTED"
       });
-      return booking
+      let totalMoney = bookings.reduce((total, booking) => {
+        return total + booking.totalMoney
+      }, 0);
+      return totalMoney
     } catch (error) {
       console.log(error);
     }
-  }
+  },
+  getBookingByMonth: async (id) => { 
+    try {
+      const firstDayWeek = new Date(moment().startOf('month').format('dddd YYYY-MM-DD'));
+      const toDay = new Date();
+      let bookings = await Booking.find({
+        idOwner: id,
+        dayCreate: { $gt: firstDayWeek, $lt: toDay },
+        status: "ACCEPTED"
+      });
+      let totalMoney = bookings.reduce((total, booking) => {
+        return total + booking.totalMoney
+      }, 0);
+      return totalMoney
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getAll: async (id) => { 
+    try {
+      let bookings = await Booking.find({
+        idOwner: id,
+        status: "ACCEPTED"
+      });
+      return bookings
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 module.exports = BookingController;

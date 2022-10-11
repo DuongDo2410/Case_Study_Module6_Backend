@@ -248,12 +248,17 @@ changePassword = async (req, res) => {
   }
 };
 
-getStatistics = (req, res) => {
+getStatistics = async (req, res) => {
   try {
-    const id = req.decoded.id
-    const data = req.body
-    const bookings = BookingController.getBookingByIdUser(id, data);
-    return res.status(200).json(bookings);
+    const id = req.decoded.id;
+    const bookings = await BookingController.getAll(id);
+    const moneyWeek = await BookingController.getBookingByWeek(id);
+    const moneyMonth = await BookingController.getBookingByMonth(id);
+    return res.status(200).json({
+      bookings: bookings,
+      moneyWeek: moneyWeek,
+      moneyMonth: moneyMonth
+    });
   } catch (error) {
     res.status(500).json({
       message: error
