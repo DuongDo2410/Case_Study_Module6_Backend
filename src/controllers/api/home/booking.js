@@ -32,10 +32,10 @@ const BookingController = {
       }
       if (data.check) {
         let booking = await Booking.create(data);
-        let home = await Home.findOne({_id: data.idHome});
-        let message = 'Đã đặt thuê nhà của bạn!'
-        data.idReceiver = home.idUser;
-        await notificationController.add(data, message);
+        // let home = await Home.findOne({_id: data.idHome});
+        // let message = 'Đã đặt thuê nhà của bạn!'
+        // data.idReceiver = home.idUser;
+        // await notificationController.add(data, message);
         res.status(200).json({
           message: "Create success",
           booking: booking,

@@ -16,19 +16,14 @@ const homeSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
-  idImage: [
+  idImage:
     {
       type: Schema.Types.ObjectId,
       ref: "Image",
-    }
-  ],
-  idImage: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Image'
-  }],
+    },
   idUser: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
   },
   rating:{
     type: Number,

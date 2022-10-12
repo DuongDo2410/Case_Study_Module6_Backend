@@ -18,12 +18,8 @@ const notificationController = {
                 message: message
             }
             await Notification.create(notification);
-            res.status(200).send({ success: true });
         } catch (err) {
-            res.status(500).send({
-                success: false,
-                error: err.message
-            });
+            console.log(err);
         }
     },
 };

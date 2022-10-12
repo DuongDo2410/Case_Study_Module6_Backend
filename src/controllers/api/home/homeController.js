@@ -7,6 +7,9 @@ const HomeController = {
   addHome: async (req, res) => {
     try {
       const data = req.body;
+      let idUser = req.decoded.id;
+      data.idUser = idUser;
+      console.log("11111", data);
       let idImage = await ImageController.addImage(data);
       data.idImage = idImage;
       let home = await Home.create(data);
@@ -18,23 +21,43 @@ const HomeController = {
       });
     }
   },
-    getAll: async (req, res) => {
-        try {
-            // let page = req.params.page
-            // console.log(page);
-            let fullHomes = await Home.find({}).populate("idImage");
-            // const totalPage = Math.round(fullHomes.length/9);
-            // let homes = await Home.find({}).populate("idImage").limit(9).skip(page*9);
-            res.status(200).json({
-                success: true,
-                homes: fullHomes
-            });
-        } catch (err) {
-            res.status(500).json({
-                error: err.message,
-            });
-        }
-    },
+  getAll: async (req, res) => {
+    try {
+      let homes = await Home.find({}).populate("idImage");
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  },
+  getHouseByUser: async (req, res) => {
+    try {
+      const idUser = req.decoded.id;
+      console.log(idUser);
+      let homes = await Home.find({
+        idUser: idUser,
+      }).populate("idImage");
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  },
+  getHouseById: async (req, res) => {
+    try {
+      const idHome = req.params.id;
+      let homes = await Home.findOne({
+        _id: idHome,
+      }).populate("idImage");
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  },
   deleteHome: async (req, res) => {
     try {
       let idHome = req.params.id;
@@ -88,13 +111,17 @@ const HomeController = {
 
     updateHome: async (req, res) => {
         try {
+          console.log(123456);
             let idHome = req.params.id;
             let data = req.body;
+            console.log(data);
+            let idImage = await ImageController.addImage(data);
+            data.idImage = idImage;
             let checkHome = await Home.findById(idHome);
             if (!checkHome) {
                 res.status(404).send({errorMessage: "Home not found!!"});
             } else {
-                await Home.updateMany(
+                await Home.updateOne(
                     {
                         _id: idHome,
                     },
@@ -102,7 +129,8 @@ const HomeController = {
                         $set: data,
                     }
                 );
-                let HomeUpdate = await Home.findById(idHome);
+                let HomeUpdate = await Home.findById(idHome).populate('idImage');
+                console.log(HomeUpdate);
                 res.status(200).send(HomeUpdate);
             }
         } catch (err) {
