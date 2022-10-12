@@ -57,13 +57,31 @@ const BookingController = {
       console.log(error);
     }
   },
+  getBooking: async (req, res) => {
+    try {
+      let idOwner = req.decoded.id;
+      let bookings = await Booking.find({
+        idOwner: idOwner,
+      })
+        .populate("idHome")
+        .populate("idRenter");
+      res.status(200).json({
+        message: "success",
+        bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
   bookingPending: async (req, res) => {
     try {
       let idOwner = req.decoded.id;
       let bookings = await Booking.find({
         idOwner: idOwner,
         status: "PENDING",
-      }).populate("idHome");
+      })
+        .populate("idHome")
+        .populate("idRenter");
       res.status(200).json({
         message: "success",
         bookings: bookings,
@@ -78,10 +96,51 @@ const BookingController = {
       let bookings = await Booking.find({
         idOwner: idOwner,
         status: "ACCEPTED",
-      }).populate("idHome");
+      })
+        .populate("idHome")
+        .populate("idRenter");
       res.status(200).json({
         message: "success",
         bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getBookingSuccessOwner: async (req, res) => {
+    try {
+      let idOwner = req.decoded.id;
+      let bookings = await Booking.find({
+        idOwner: idOwner,
+        status: "SUCCESS",
+      })
+        .populate("idHome")
+        .populate("idRenter");
+      res.status(200).json({
+        message: "success",
+        bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  bookingSuccess: async (req, res) => {
+    try {
+      let idBooking = req.params.id;
+      let booking = await Booking.findOne({
+        _id: idBooking,
+      });
+
+      booking = await Booking.findByIdAndUpdate(
+        { _id: booking._id },
+        { status: "SUCCESS" },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({
+        message: "success!",
+        booking: booking,
       });
     } catch (error) {
       console.log(error);

@@ -4,11 +4,11 @@ const { Schema } = require("mongoose");
 const bookingSchema = new mongoose.Schema({
   idOwner: {
     type: Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
   },
   idRenter: {
     type: Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
   },
   idHome: {
     type: Schema.Types.ObjectId,

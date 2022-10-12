@@ -4,11 +4,14 @@ const { auth } = require("../../../middlewares/auth");
 
 const bookingRouter = Router.Router();
 bookingRouter.use(auth);
+bookingRouter.get("", BookingController.getBooking);
 bookingRouter.get("/historyRenter", BookingController.historyBookingRenter);
 bookingRouter.get("/booking-pending", BookingController.bookingPending);
 bookingRouter.get("/booking-accept", BookingController.bookingAcceptOwner);
+bookingRouter.get("/booking-success", BookingController.getBookingSuccessOwner);
 bookingRouter.post("", BookingController.booking);
 bookingRouter.post("/cancel/:id", BookingController.cancelBooking);
 bookingRouter.post("/accept/:id", BookingController.acceptBooking);
+bookingRouter.post("/success/:id", BookingController.bookingSuccess);
 
 module.exports = bookingRouter;
