@@ -7,6 +7,8 @@ require ("dotenv")
 const Process = require("process");
 const nodemailer = require("nodemailer");
 const otpModel = require("../../models/otp");
+const BookingController = require("./home/booking");
+const DayController = require("./home/dayController");
 
 register = async (req, res) => {
   try {
@@ -37,23 +39,29 @@ login = async (req, res) => {
     } else {
       let password = user.password;
       let comparePassword = await bcrypt.compare(loginForm.password, password);
-      console.log(comparePassword);
       if (!comparePassword) {
         res.status(401).json({
           message: "password is wrong",
         });
       } else {
-        console.log("1");
         let payload = {
           id: user._id,
-          username: user.username,
           role: user.role,
+        };
+        let currentUser = {
+          fullName: user?.fullName,
+          avatar: user?.avatar,
+          role: user?.role,
+          phoneNumber: user?.phoneNumber,
+          email: user?.email,
+          address: user?.address
         };
         let token = jwt.sign(payload, process.env.SECRET_KEY, {
           expiresIn: 36000 * 36000 * 100,
         });
         res.status(200).json({
           token: token,
+          user: currentUser
         });
       }
     }
@@ -71,8 +79,8 @@ try {
       idGoogle: data.googleId,
       email: data.email,
       fullName: data.name,
-      username: data.name,
-      avatar: data.imageUrl
+      avatar: data.imageUrl,
+      address: data.address,
     }
     checkUser = await User.create(user);
   }
@@ -96,7 +104,15 @@ getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.decoded.id);
     if (user) {
-      res.status(200).json(user);
+      let currentUser = {
+        fullName: user.fullName,
+        avatar: user.avatar,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        address: user.address
+      };
+      res.status(200).json(currentUser);
     } else {
       res.status(404).json({
         success: false,
@@ -108,17 +124,24 @@ getUserProfile = async (req, res) => {
   }
 };
 updateUserProfile = async (req, res) => {
-  let id = req.params.id;
-  const user = await User.findOne({ _id: id });
   try {
+    let id = req.decoded.id;
+    const user = await User.findOne({ _id: id });
     if (user) {
       let data = req.body;
-      console.log("2", data, id);
-
+      console.log(data);
       let newUser = await User.findOneAndUpdate({ _id: id }, data, {
         new: true,
       });
-      res.status(200).json(newUser);
+      let currentUser = {
+        fullName: newUser.fullName,
+        avatar: newUser.avatar,
+        role: newUser.role,
+        phoneNumber: newUser.phoneNumber,
+        email: newUser.email,
+        address: newUser.address
+      };
+      res.status(200).json(currentUser);
     } else {
       res.status(404).json({
         success: false,
@@ -222,6 +245,24 @@ changePassword = async (req, res) => {
   }else {
     res.json("User is not exist");
   }
+};
+
+getStatistics = async (req, res) => {
+  try {
+    const id = req.decoded.id;
+    const bookings = await BookingController.getAll(id);
+    const moneyWeek = await BookingController.getBookingByWeek(id);
+    const moneyMonth = await BookingController.getBookingByMonth(id);
+    return res.status(200).json({
+      bookings: bookings,
+      moneyWeek: moneyWeek,
+      moneyMonth: moneyMonth
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error
+    })
+  }
 }
 
 module.exports = {
@@ -232,5 +273,6 @@ module.exports = {
   sendOTP,
   checkOTP,
   changePassword,
-  loginWithGoogle
+  loginWithGoogle,
+  getStatistics
 }

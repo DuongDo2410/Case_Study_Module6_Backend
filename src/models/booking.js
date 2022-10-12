@@ -18,7 +18,9 @@ const bookingSchema = new mongoose.Schema({
   endDay: Date,
   status: String,
   totalMoney: String,
-});
+
+},{timestamps: true});
+
 
 const Booking = mongoose.model("Booking", bookingSchema);
 
