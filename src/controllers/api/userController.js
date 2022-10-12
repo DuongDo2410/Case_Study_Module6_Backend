@@ -2,8 +2,8 @@ const bcrypt = require("bcrypt");
 const User = require("../../models/userModel");
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
-const {SECRET_KEY, generateToken} = require("../../middlewares/auth");
-require ("dotenv")
+const { SECRET_KEY, generateToken } = require("../../middlewares/auth");
+require("dotenv");
 const Process = require("process");
 const nodemailer = require("nodemailer");
 const otpModel = require("../../models/otp");
@@ -49,19 +49,20 @@ login = async (req, res) => {
           role: user.role,
         };
         let currentUser = {
+          id: user._id,
           fullName: user?.fullName,
           avatar: user?.avatar,
           role: user?.role,
           phoneNumber: user?.phoneNumber,
           email: user?.email,
-          address: user?.address
+          address: user?.address,
         };
         let token = jwt.sign(payload, process.env.SECRET_KEY, {
           expiresIn: 36000 * 36000 * 100,
         });
         res.status(200).json({
           token: token,
-          user: currentUser
+          user: currentUser,
         });
       }
     }
@@ -69,37 +70,37 @@ login = async (req, res) => {
     console.log("error");
   }
 };
-loginWithGoogle = async (req,res, next)=>{
-try {
-  let data = req.body;
-  let checkUser = await User.findOne({idGoogle:data.googleId});
+loginWithGoogle = async (req, res, next) => {
+  try {
+    let data = req.body;
+    let checkUser = await User.findOne({ idGoogle: data.googleId });
 
-  if (!checkUser) {
-    let user = {
-      idGoogle: data.googleId,
-      email: data.email,
-      fullName: data.name,
-      avatar: data.imageUrl,
-      address: data.address,
+    if (!checkUser) {
+      let user = {
+        idGoogle: data.googleId,
+        email: data.email,
+        fullName: data.name,
+        avatar: data.imageUrl,
+        address: data.address,
+      };
+      checkUser = await User.create(user);
     }
-    checkUser = await User.create(user);
+    let payload = {
+      id: checkUser._id,
+      fullName: checkUser.username,
+      role: checkUser.role,
+    };
+    let token = jwt.sign(payload, process.env.SECRET_KEY, {
+      expiresIn: 36000 * 36000 * 100,
+    });
+    res.status(200).json({
+      token: token,
+      user: checkUser,
+    });
+  } catch (err) {
+    console.log(err);
   }
-  let payload = {
-    id: checkUser._id,
-    fullName: checkUser.username,
-    role: checkUser.role,
-  };
-  let token = jwt.sign(payload, process.env.SECRET_KEY, {
-    expiresIn: 36000 * 36000 * 100,
-  });
-  res.status(200).json({
-    token: token,
-    user: checkUser
-  })
-}catch (err){
-  console.log(err)
-}
-}
+};
 getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.decoded.id);
@@ -110,7 +111,7 @@ getUserProfile = async (req, res) => {
         role: user.role,
         phoneNumber: user.phoneNumber,
         email: user.email,
-        address: user.address
+        address: user.address,
       };
       res.status(200).json(currentUser);
     } else {
@@ -139,7 +140,7 @@ updateUserProfile = async (req, res) => {
         role: newUser.role,
         phoneNumber: newUser.phoneNumber,
         email: newUser.email,
-        address: newUser.address
+        address: newUser.address,
       };
       res.status(200).json(currentUser);
     } else {
@@ -170,79 +171,81 @@ changePassword = async (req, res) => {
   } else {
     res.json("User is not exist");
   }
-}
-forgotPassword = async (req, res)=>{
-  const {email} = req.body;
-  User.findOne({email},(err, user)=>{
+};
+forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  User.findOne({ email }, (err, user) => {});
+};
 
-  })
-
-}
-
-sendOTP = async (req,res)=>{
+sendOTP = async (req, res) => {
   let OTP = Math.random();
-  OTP = Math.round(OTP*1000000);
-  const user = await User.findOne({email : req.body.email})
+  OTP = Math.round(OTP * 1000000);
+  const user = await User.findOne({ email: req.body.email });
 
-  if(user) {
+  if (user) {
     let transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
       secure: true,
-      service : 'Gmail',
+      service: "Gmail",
 
       auth: {
         user: "hanguyen18052004@gmail.com",
         pass: Process.env.PASSWORD_MAIL,
-      }
+      },
     });
     let mailOptions = {
       to: req.body.email,
       subject: "Otp for registration is: ",
-      html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + OTP + "</h1>" // html body
+      html:
+        "<h3>OTP for account verification is </h3>" +
+        "<h1 style='font-weight:bold;'>" +
+        OTP +
+        "</h1>", // html body
     };
 
-    await transporter.sendMail(mailOptions, async(error, info) => {
+    await transporter.sendMail(mailOptions, async (error, info) => {
       if (error) {
         return res.json(error);
       }
       const newOTP = new otpModel({
         email: req.body.email,
-        otp: OTP
+        otp: OTP,
       });
       await newOTP.save();
-      res.json("Please check email to get OTP")
+      res.json("Please check email to get OTP");
     });
-  }else {
+  } else {
     res.json("User is not exist");
   }
-
-
-}
+};
 
 checkOTP = async (req, res) => {
-  const otpMail = await otpModel.findOne({email: req.body.email});
-  const user = await User.findOne({email: req.body.email});
+  const otpMail = await otpModel.findOne({ email: req.body.email });
+  const user = await User.findOne({ email: req.body.email });
   // const password = await bcrypt.getRounds(user.password);
-    if(otpMail && otpMail.otp === req.body.otp){
-      res.json(user.password);
-    }else {
-      res.json("OTP is expired");
-    }
-}
+  if (otpMail && otpMail.otp === req.body.otp) {
+    res.json(user.password);
+  } else {
+    res.json("OTP is expired");
+  }
+};
 
 changePassword = async (req, res) => {
   const user = await User.findById(req.body.id);
-  if(user){
-    let comparePassword = await bcrypt.compare(req.body.password, user.password);
-    if(comparePassword){
+  if (user) {
+    let comparePassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (comparePassword) {
       user.password = await bcrypt.hash(req.body.newPassword, 10);
       await user.save();
-      res.json("Change password successfully")
-    }else{
+      res.json("Change password successfully");
+    } else {
       res.json("Wrong password");
     }
-  }else {
+  } else {
     res.json("User is not exist");
   }
 };
@@ -256,14 +259,14 @@ getStatistics = async (req, res) => {
     return res.status(200).json({
       bookings: bookings,
       moneyWeek: moneyWeek,
-      moneyMonth: moneyMonth
+      moneyMonth: moneyMonth,
     });
   } catch (error) {
     res.status(500).json({
-      message: error
-    })
+      message: error,
+    });
   }
-}
+};
 
 module.exports = {
   register,
@@ -274,5 +277,5 @@ module.exports = {
   checkOTP,
   changePassword,
   loginWithGoogle,
-  getStatistics
-}
+  getStatistics,
+};
