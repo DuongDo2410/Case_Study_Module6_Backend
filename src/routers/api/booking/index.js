@@ -7,6 +7,14 @@ bookingRouter.use(auth);
 bookingRouter.get("", BookingController.getBooking);
 bookingRouter.get("/historyRenter", BookingController.historyBookingRenter);
 bookingRouter.get("/booking-pending", BookingController.bookingPending);
+bookingRouter.get(
+  "/booking-pending-renter",
+  BookingController.getbookingPendingRenter
+);
+bookingRouter.get(
+  "/booking-accept-renter",
+  BookingController.getbookingAcceptRenter
+);
 bookingRouter.get("/booking-accept", BookingController.bookingAcceptOwner);
 bookingRouter.get("/booking-success", BookingController.getBookingSuccessOwner);
 bookingRouter.post("", BookingController.booking);
