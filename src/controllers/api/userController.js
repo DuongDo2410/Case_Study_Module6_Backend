@@ -136,6 +136,8 @@ updateUserProfile = async (req, res) => {
         new: true,
       });
       let currentUser = {
+        id: newUser._id,
+        username: newUser.username,
         fullName: newUser.fullName,
         avatar: newUser.avatar,
         role: newUser.role,
@@ -155,8 +157,7 @@ updateUserProfile = async (req, res) => {
   }
 };
 changePassword = async (req, res) => {
-  console.log("1111111111111111", req.decoded.id);
-  const user = await User.findById(req.decoded.id);
+  let user = await User.findById(req.decoded.id);
   if (user) {
     let comparePassword = await bcrypt.compare(
       req.body.password,
@@ -165,7 +166,7 @@ changePassword = async (req, res) => {
     if (comparePassword) {
       user.password = await bcrypt.hash(req.body.newPassword, 10);
       await user.save();
-      res.json("Change password successfully");
+      return res.status(200).json("Change password successfully");
     } else {
       res.json("Wrong password");
     }
@@ -229,25 +230,6 @@ checkOTP = async (req, res) => {
     res.json(user.password);
   } else {
     res.json("OTP is expired");
-  }
-};
-
-changePassword = async (req, res) => {
-  const user = await User.findById(req.body.id);
-  if (user) {
-    let comparePassword = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
-    if (comparePassword) {
-      user.password = await bcrypt.hash(req.body.newPassword, 10);
-      await user.save();
-      res.json("Change password successfully");
-    } else {
-      res.json("Wrong password");
-    }
-  } else {
-    res.json("User is not exist");
   }
 };
 
