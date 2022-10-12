@@ -7,6 +7,8 @@ const HomeController = {
   addHome: async (req, res) => {
     try {
       const data = req.body;
+      let idUser = req.decoded.id;
+      data.idUser = idUser;
       console.log("11111", data);
       let idImage = await ImageController.addImage(data);
       data.idImage = idImage;
@@ -22,6 +24,33 @@ const HomeController = {
   getAll: async (req, res) => {
     try {
       let homes = await Home.find({}).populate("idImage");
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  },
+  getHouseByUser: async (req, res) => {
+    try {
+      const idUser = req.decoded.id;
+      console.log(idUser);
+      let homes = await Home.find({
+        idUser: idUser,
+      }).populate("idImage");
+      res.status(200).json(homes);
+    } catch (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  },
+  getHouseById: async (req, res) => {
+    try {
+      const idHome = req.params.id;
+      let homes = await Home.find({
+        _id: idHome,
+      }).populate("idImage");
       res.status(200).json(homes);
     } catch (err) {
       res.status(500).json({
