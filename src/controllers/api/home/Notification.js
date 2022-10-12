@@ -10,12 +10,12 @@ const notificationController = {
             res.status(404).send(err);
         }
     },
-    add: async (data) => {
+    add: async (data, message) => {
         try {
             const notification = {
-                idSender: data.idSender,
+                idSender: data.idRenter,
                 idReceiver: data.idReceiver,
-                message: data.message
+                message: message
             }
             await Notification.create(notification);
             res.status(200).send({ success: true });

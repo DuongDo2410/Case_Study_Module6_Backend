@@ -1,6 +1,7 @@
 const moment = require("moment");
 const Booking = require("../../../models/booking");
 const Day = require("../../../models/day");
+const Home = require("../../../models/home");
 const Notification = require("../../../models/notification");
 const notificationController = require("./Notification");
 
@@ -31,7 +32,10 @@ const BookingController = {
       }
       if (data.check) {
         let booking = await Booking.create(data);
-        await notificationController.add(); 
+        let home = await Home.findOne({_id: data.idHome});
+        let message = 'Đã đặt thuê nhà của bạn!'
+        data.idReceiver = home.idUser;
+        await notificationController.add(data, message);
         res.status(200).json({
           message: "Create success",
           booking: booking,
