@@ -51,6 +51,7 @@ login = async (req, res) => {
         let currentUser = {
           id: user._id,
           fullName: user?.fullName,
+          username: user?.username,
           avatar: user?.avatar,
           role: user?.role,
           phoneNumber: user?.phoneNumber,
