@@ -1,6 +1,9 @@
 const moment = require("moment");
 const Booking = require("../../../models/booking");
 const Day = require("../../../models/day");
+const Home = require("../../../models/home");
+const Notification = require("../../../models/notification");
+const notificationController = require("./Notification");
 
 const BookingController = {
   booking: async (req, res) => {
@@ -29,6 +32,10 @@ const BookingController = {
       }
       if (data.check) {
         let booking = await Booking.create(data);
+        // let home = await Home.findOne({_id: data.idHome});
+        // let message = 'Đã đặt thuê nhà của bạn!'
+        // data.idReceiver = home.idUser;
+        // await notificationController.add(data, message);
         res.status(200).json({
           message: "Create success",
           booking: booking,
@@ -41,7 +48,6 @@ const BookingController = {
   historyBookingRenter: async (req, res) => {
     try {
       let idRenter = req.decoded.id;
-      console.log(idRenter);
       let bookings = await Booking.find({
         idRenter: idRenter,
         status: "ACCEPTED",
@@ -226,6 +232,54 @@ const BookingController = {
           message: "Update false!",
         });
       }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getBookingByWeek: async (id) => {
+    try {
+      let day = moment().startOf('week').format("YYYY-MM-DD 23:59:59");
+      const firstDayWeek = new Date(day);
+      const toDay = new Date();
+      let bookings = await Booking.find({
+        idOwner: id,
+        createdAt: { $gt: firstDayWeek, $lte: toDay },
+        status: "SUCCESS"
+      });
+      let totalMoney = bookings.reduce((total, booking) => {
+        return total += Math.round(booking.totalMoney);
+      }, 0);
+      return totalMoney
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getBookingByMonth: async (id) => { 
+    try {
+      let day = moment().startOf('month').format("YYYY-MM-DD 23:59:59");
+      const firstDayMonth = new Date(day);
+      const toDay = new Date();
+      let bookings = await Booking.find({
+        idOwner: id,
+        createdAt: { $gt: firstDayMonth, $lte: toDay },
+        status: "SUCCESS"
+      });
+      let totalMoney = bookings.reduce((total, booking) => {
+        return total += Math.round(booking.totalMoney);
+      }, 0);
+      console.log(totalMoney);
+      return totalMoney
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getAll: async (id) => { 
+    try {
+      let bookings = await Booking.find({
+        idOwner: id,
+        status: "ACCEPTED"
+      });
+      return bookings
     } catch (error) {
       console.log(error);
     }

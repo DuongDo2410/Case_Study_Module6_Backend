@@ -1,6 +1,6 @@
 const Notification = require("../../../models/notification");
 
-const ImageController = {
+const notificationController = {
     getAll: async (req, res) => {
         try {
             let id = req.params.id
@@ -10,21 +10,17 @@ const ImageController = {
             res.status(404).send(err);
         }
     },
-    add: async (data) => {
+    add: async (data, message) => {
         try {
             const notification = {
-                idSender: data.idSender,
+                idSender: data.idRenter,
                 idReceiver: data.idReceiver,
-                message: data.message
+                message: message
             }
             await Notification.create(notification);
-            res.status(200).send({ success: true });
         } catch (err) {
-            res.status(500).send({
-                success: false,
-                error: err.message
-            });
+            console.log(err);
         }
     },
 };
-module.exports = ImageController;
+module.exports = notificationController;

@@ -10,21 +10,29 @@ const homeSchema = new mongoose.Schema({
   amountBathroom: Number,
   description: String,
   price: Number,
+  comment: [],
   view: {
     type: Number,
     required: true,
     default: 0,
   },
-  idImage: [
+  idImage:
     {
       type: Schema.Types.ObjectId,
       ref: "Image",
     },
-  ],
   idUser: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  rating:{
+    type: Number,
+    default: 0,
+  },
+  ratingCount:{
+    type: Number,
+    default: 0,
+  }
 });
 
 const Home = mongoose.model("Home", homeSchema);
