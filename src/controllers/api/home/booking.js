@@ -50,7 +50,7 @@ const BookingController = {
       let idRenter = req.decoded.id;
       let bookings = await Booking.find({
         idRenter: idRenter,
-        status: "ACCEPTED",
+        status: "SUCCESS",
       })
         .populate("idOwner")
         .populate("idRenter")
@@ -85,6 +85,40 @@ const BookingController = {
       let bookings = await Booking.find({
         idOwner: idOwner,
         status: "PENDING",
+      })
+        .populate("idHome")
+        .populate("idRenter");
+      res.status(200).json({
+        message: "success",
+        bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getbookingPendingRenter: async (req, res) => {
+    try {
+      let idRenter = req.decoded.id;
+      let bookings = await Booking.find({
+        idRenter: idRenter,
+        status: "PENDING",
+      })
+        .populate("idHome")
+        .populate("idRenter");
+      res.status(200).json({
+        message: "success",
+        bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getbookingAcceptRenter: async (req, res) => {
+    try {
+      let idRenter = req.decoded.id;
+      let bookings = await Booking.find({
+        idRenter: idRenter,
+        status: "ACCEPTED",
       })
         .populate("idHome")
         .populate("idRenter");
@@ -206,11 +240,9 @@ const BookingController = {
   },
   cancelBooking: async (req, res) => {
     try {
-      let idRenter = req.decoded.id;
-      let idHome = req.params.id;
+      let idBooking = req.params.id;
       let booking = await Booking.findOne({
-        idRenter: idRenter,
-        idHome: idHome,
+        _id: idBooking,
       });
       let today = moment(new Date());
       let startDay = moment.utc(booking.startDay);
@@ -228,8 +260,8 @@ const BookingController = {
           booking: booking,
         });
       } else {
-        res.status(401).json({
-          message: "Update false!",
+        return res.status(404).json({
+          message: "Bạn không được hủy đơn trước 1 ngày.",
         });
       }
     } catch (error) {
@@ -238,48 +270,48 @@ const BookingController = {
   },
   getBookingByWeek: async (id) => {
     try {
-      let day = moment().startOf('week').format("YYYY-MM-DD 23:59:59");
+      let day = moment().startOf("week").format("YYYY-MM-DD 23:59:59");
       const firstDayWeek = new Date(day);
       const toDay = new Date();
       let bookings = await Booking.find({
         idOwner: id,
         createdAt: { $gt: firstDayWeek, $lte: toDay },
-        status: "SUCCESS"
+        status: "SUCCESS",
       });
       let totalMoney = bookings.reduce((total, booking) => {
-        return total += Math.round(booking.totalMoney);
+        return (total += Math.round(booking.totalMoney));
       }, 0);
-      return totalMoney
+      return totalMoney;
     } catch (error) {
       console.log(error);
     }
   },
-  getBookingByMonth: async (id) => { 
+  getBookingByMonth: async (id) => {
     try {
-      let day = moment().startOf('month').format("YYYY-MM-DD 23:59:59");
+      let day = moment().startOf("month").format("YYYY-MM-DD 23:59:59");
       const firstDayMonth = new Date(day);
       const toDay = new Date();
       let bookings = await Booking.find({
         idOwner: id,
         createdAt: { $gt: firstDayMonth, $lte: toDay },
-        status: "SUCCESS"
+        status: "SUCCESS",
       });
       let totalMoney = bookings.reduce((total, booking) => {
-        return total += Math.round(booking.totalMoney);
+        return (total += Math.round(booking.totalMoney));
       }, 0);
       console.log(totalMoney);
-      return totalMoney
+      return totalMoney;
     } catch (error) {
       console.log(error);
     }
   },
-  getAll: async (id) => { 
+  getAll: async (id) => {
     try {
       let bookings = await Booking.find({
         idOwner: id,
-        status: "ACCEPTED"
+        status: "ACCEPTED",
       });
-      return bookings
+      return bookings;
     } catch (error) {
       console.log(error);
     }
