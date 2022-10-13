@@ -17,6 +17,7 @@ bookingRouter.get(
 );
 bookingRouter.get("/booking-accept", BookingController.bookingAcceptOwner);
 bookingRouter.get("/booking-success", BookingController.getBookingSuccessOwner);
+bookingRouter.get("/booking-by-home/:id", BookingController.getBookingByIdHome);
 bookingRouter.post("", BookingController.booking);
 bookingRouter.post("/cancel/:id", BookingController.cancelBooking);
 bookingRouter.post("/accept/:id", BookingController.acceptBooking);

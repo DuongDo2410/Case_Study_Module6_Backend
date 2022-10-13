@@ -24,7 +24,7 @@ const BookingController = {
         if (checkDay) {
           data.check = false;
           return res.status(404).json({
-            message: "Date already exists",
+            message: "Đã có khách đặt vào ngày này, vui lòng chọn ngày khác",
           });
         } else {
           data.check = true;
@@ -68,6 +68,22 @@ const BookingController = {
       let idOwner = req.decoded.id;
       let bookings = await Booking.find({
         idOwner: idOwner,
+      })
+        .populate("idHome")
+        .populate("idRenter");
+      res.status(200).json({
+        message: "success",
+        bookings: bookings,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  getBookingByIdHome: async (req, res) => {
+    try {
+      let idHome = req.params.id;
+      let bookings = await Booking.find({
+        idHome: idHome,
       })
         .populate("idHome")
         .populate("idRenter");
