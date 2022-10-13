@@ -8,7 +8,8 @@ const ratingController ={
             let data = req.body;
             let idHome = req.body.id;
             let idUser = req.decoded.id;
-            let checkHome = await Home.findById(idHome);
+            let checkHome = await Home.findOne({_id: idHome});
+            console.log(checkHome)
             if (!checkHome) {
                 res.status(404).send({errorMessage: "Home not found!!"});
 
