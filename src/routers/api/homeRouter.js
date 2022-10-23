@@ -1,16 +1,18 @@
 const Router = require("express");
 const HomeController = require("../../controllers/api/home/homeController");
+const { auth } = require("../../middlewares/auth");
 
 const homeRouter = Router.Router();
-
-homeRouter.post("", HomeController.addHome);
-homeRouter.put("/:id", HomeController.updateHome);
-homeRouter.put("/updateStatus/:id", HomeController.UpdateStatus);
-homeRouter.delete("/:id", HomeController.deleteHome);
 homeRouter.get("", HomeController.getAll);
+homeRouter.get("/get-house-by-user", auth, HomeController.getHouseByUser);
+homeRouter.get("/top", HomeController.showTop5House);
+homeRouter.post("/comments/:id", HomeController.updateComment);
+homeRouter.post("", auth, HomeController.addHome);
+homeRouter.post("/find", HomeController.filterHome);
+homeRouter.get("/detail/:id", auth, HomeController.getHouseById);
 homeRouter.get("/:id", HomeController.showDetail);
-homeRouter.get("/find/home", HomeController.fiterHome);
-homeRouter.get("", HomeController.showAllHouse);
-homeRouter.get("show/top5", HomeController.showTop5House);
+homeRouter.put("/:id", HomeController.updateHome);
+homeRouter.put("/:id", auth, HomeController.updateStatus);
+homeRouter.delete("/:id", auth, HomeController.deleteHome);
 
 module.exports = homeRouter;
